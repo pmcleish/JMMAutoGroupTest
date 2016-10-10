@@ -1,3 +1,4 @@
 *.user
 /JMMAutoGroupTest/obj
 /JMMAutoGroupTest/bin
+/.vs/JMMAutoGroupTest/v14/*.suo

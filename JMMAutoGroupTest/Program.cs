@@ -30,7 +30,10 @@ namespace JMMAutoGroupTest
                     con.Open();
                     relationMap = LoadRelations(con);
                     titleMap = LoadMainTitles(con);
-                    animeIds = LoadAllAniDBAnimeIds(con);
+
+                    // [Un]comment out either of the two below lines based on if you want to test
+                    // only JMM series, or all AniDB anime that JMM knows about
+                    //animeIds = LoadAllAniDBAnimeIds(con);
                     animeIds = LoadAnimeIdsFromSeries(con);
                 }
 
