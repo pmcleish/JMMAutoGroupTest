@@ -37,7 +37,7 @@ namespace JMMAutoGroupTest
                     animeIds = LoadAnimeIdsFromSeries(con);
                 }
 
-                var autoGrpCalc = new AutoAnimeGroupCalculator(relationMap);
+                var autoGrpCalc = new AutoAnimeGroupCalculator(relationMap, mainAnimeSelectionStrategy: MainAnimeSelectionStrategy.MinAirDate);
 
                 var results = animeIds.Select(id => new { AnimeId = id, GroupId = autoGrpCalc.GetGroupAnimeId(id) })
                     .ToLookup(a => titleMap[a.GroupId], a => "[" + a.AnimeId + "] " + titleMap[a.AnimeId])
@@ -70,7 +70,7 @@ namespace JMMAutoGroupTest
             using (IDbCommand cmd = con.CreateCommand())
             {
                 cmd.CommandText = @"
-                    SELECT fromAnime.AnimeID, toAnime.AnimeID, fromAnime.AnimeType, toAnime.AnimeType, fromAnime.MainTitle, toAnime.MainTitle, rel.RelationType
+                    SELECT fromAnime.AnimeID, toAnime.AnimeID, fromAnime.AnimeType, toAnime.AnimeType, fromAnime.MainTitle, toAnime.MainTitle, rel.RelationType, fromAnime.AirDate, toAnime.AirDate
                         FROM AniDB_Anime_Relation rel
                             INNER JOIN AniDB_Anime fromAnime
                                 ON fromAnime.AnimeID = rel.AnimeID
@@ -89,7 +89,9 @@ namespace JMMAutoGroupTest
                                         FromType = (AnimeTypes)r.GetInt32(2),
                                         ToType = (AnimeTypes)r.GetInt32(3),
                                         FromMainTitle = r.GetString(4),
-                                        ToMainTitle = r.GetString(5)
+                                        ToMainTitle = r.GetString(5),
+                                        FromAirDate = r.IsDBNull(7) ? (DateTime?)null : r.GetDateTime(7),
+                                        ToAirDate = r.IsDBNull(8) ? (DateTime?)null : r.GetDateTime(8)
                                     };
 
                                 switch (r.GetString(6).ToLowerInvariant())
